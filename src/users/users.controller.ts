@@ -8,12 +8,15 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
+  constructor(private readonly userService: UsersService) {}
+
   @Get() // users
-  findAll() {
-    return [];
+  findAll(@Query('sex') Gender?: 'INTERN' | 'ENGINEER' | 'ADMIN'): any {
+    return this.userService.findAll(Gender);
   }
 
   @Get('interns') // /users/interns
@@ -22,22 +25,22 @@ export class UsersController {
   }
 
   @Get(':id') // /users/:id
-  findOne(@Param('id') id: string) {
-    return { id };
+  findOne(@Param('id') id: string): any {
+    return this.userService.findOne(+id);
   }
 
   @Post()
-  createUsers(@Body() User: NonNullable<unknown>) {
-    return User;
+  createUsers(@Body() User: any) {
+    return this.userService.create(User);
   }
 
   @Patch(':id') // /users/:id
-  updateuser(@Param('id') id: string, @Body() userUpdate: object) {
-    return { id, ...userUpdate };
+  updateuser(@Param('id') id: string, @Body() userUpdate: any): any {
+    return this.userService.updateOne(+id, userUpdate);
   }
 
   @Delete(':id') // /users/:id
-  deleteuser(@Param('id') id: string) {
-    return `User removed ${id}`;
+  deleteuser(@Param('id') id: string): any {
+    return this.userService.deleteOne(+id);
   }
 }
